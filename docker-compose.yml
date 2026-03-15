@@ -1,0 +1,15 @@
+services:
+  # Node.js service (use with: docker compose up nextjs-standalone --build)
+  in-scaena-standalone:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: in-scaena-standalone-image
+    container_name: in-scaena-standalone-container
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
