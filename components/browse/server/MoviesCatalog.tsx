@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { CatalogNavigation } from "./CatalogNavigation";
+import { CatalogNavigation } from "../client/CatalogNavigation";
+import { BrowseSearchParams, MovieSearchParams } from "@/app/browse/page";
 
 export interface QueryResult {
   page: number;
@@ -25,24 +26,31 @@ export interface Result {
   vote_count: number;
 }
 
-interface MovieCatalogProps {
-  page?: number;
-  movieGenresIds: string[];
-}
+type RawMovieParams = Omit<MovieSearchParams, "type">
+
+// type ResolvedMovieParams = RemoveOptional<RawMovieParams>
+
+interface MovieCatalogProps { 
+  params: RawMovieParams
+};
+
 
 export const MoviesCatalog: FC<MovieCatalogProps> = async ({
-  page = 1,
-  movieGenresIds,
+  params:{
+    page=1,
+    genres=""
+  }
 }) => {
   const params = new URLSearchParams();
   /**Default params for query*/
   params.append("include_adult", "true");
   params.append("include_video", "false");
-  params.append("sort_by", "popularity.desc");
   params.append("language", "en-US"); //temporarly
+
   //defined by our own query params
   params.append("page", page.toString());
-  params.append("with_genres", movieGenresIds.join(","));
+  params.append("sort_by", "popularity.desc");
+  params.append("with_genres", genres);
   //Fetching the results
   const moviesQuery = await fetch(
     `https://api.themoviedb.org/3/discover/movie?${params.toString()}`,
@@ -67,3 +75,13 @@ export const MoviesCatalog: FC<MovieCatalogProps> = async ({
     </>
   );
 };
+
+
+// const ResolveUndefinedParams = (rawParams: RawParams):ResolvedMovieParams => {
+
+// }
+
+// // Quita el ? (opcionalidad) de todos los campos
+// type RemoveOptional<T> = {
+//   [K in keyof T]-?: T[K];
+// };

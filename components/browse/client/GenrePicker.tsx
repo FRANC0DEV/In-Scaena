@@ -1,24 +1,14 @@
 "use client";
+import { MediaType } from "@/app/browse/page";
+import { GenresQueryResult } from "@/lib/requests/genres";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
-export interface MovieGenresQueryResult {
-  genres: Genre[];
-}
-
-export interface Genre {
-  id: number;
-  name: string;
-}
-
-const movieGenresInfoFn = async () => {
-  const response = await fetch("/api/movies/genres");
-  const data = await response.json();
-  return data as MovieGenresQueryResult;
-};
-
-export const MovieGenreFilter: FC = () => {
+export const GenrePicker: FC<{ queryFn: () => Promise<GenresQueryResult>, mediaType: MediaType }> = ({
+  queryFn,
+  mediaType
+}) => {
   const pathname = usePathname();
   const readOnlySearchParams = useSearchParams();
   const router = useRouter();
@@ -30,7 +20,7 @@ export const MovieGenreFilter: FC = () => {
         .map((g) => Number(g)) || []
     );
   });
-  
+
   const handleCheckChange = useCallback(
     (checked: boolean, id: number) => {
       let next: number[];
@@ -43,9 +33,7 @@ export const MovieGenreFilter: FC = () => {
 
       setSelectedGenresIds(next);
 
-      const params = new URLSearchParams(
-        readOnlySearchParams.toString()
-      );
+      const params = new URLSearchParams(readOnlySearchParams.toString());
 
       if (next.length > 0) {
         params.set("genres", next.join(","));
@@ -57,17 +45,12 @@ export const MovieGenreFilter: FC = () => {
 
       router.replace(`${pathname}?${params.toString()}`);
     },
-    [
-      selectedGenresIds,
-      readOnlySearchParams,
-      router,
-      pathname,
-    ]
+    [selectedGenresIds, readOnlySearchParams, router, pathname]
   );
 
   const { data, status, error } = useQuery({
-    queryKey: ["movie", "genres"],
-    queryFn: movieGenresInfoFn,
+    queryKey: [mediaType, "genres"],
+    queryFn,
   });
 
   if (status === "pending") {
