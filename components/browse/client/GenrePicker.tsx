@@ -1,14 +1,11 @@
 "use client";
 import { MediaType } from "@/app/browse/page";
-import { GenresQueryResult } from "@/lib/requests/genres";
+import { getMovieGenres, getTvSeriesGenres } from "@/lib/requests/genres";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC, useCallback, useState } from "react";
 
-export const GenrePicker: FC<{ queryFn: () => Promise<GenresQueryResult>, mediaType: MediaType }> = ({
-  queryFn,
-  mediaType
-}) => {
+export const GenrePicker: FC<{ mediaType: MediaType }> = ({ mediaType }) => {
   const pathname = usePathname();
   const readOnlySearchParams = useSearchParams();
   const router = useRouter();
@@ -50,7 +47,7 @@ export const GenrePicker: FC<{ queryFn: () => Promise<GenresQueryResult>, mediaT
 
   const { data, status, error } = useQuery({
     queryKey: [mediaType, "genres"],
-    queryFn,
+    queryFn: mediaType === "movie" ? getMovieGenres : getTvSeriesGenres,
   });
 
   if (status === "pending") {

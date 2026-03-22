@@ -2,7 +2,6 @@ import { GenrePicker } from "@/components/browse/client/GenrePicker";
 import { MoviesCatalog } from "@/components/browse/server/MoviesCatalog";
 import { FC, Suspense } from "react";
 import { ReactQueryProvider } from "@/components/client/ReactQueryProvider";
-import { getMovieGenres, getTvSeriesGenres } from "@/lib/requests/genres";
 import { MediaSelector } from "@/components/browse/client/MediaSelector";
 import { SeriesCatalog } from "@/components/browse/server/SeriesCatalog";
 
@@ -30,16 +29,15 @@ export default async function BrowsePage(props: {
         {/**Genre Picker*/}
         <GenrePicker
           key={mediaType}
-          queryFn={mediaType === "movie" ? getMovieGenres : getTvSeriesGenres}
           mediaType={mediaType}
         />
         {/**Filter*/}
       </ReactQueryProvider>
       <Suspense fallback={<LoadingSkeleton />}>
-        {isMovieParams(searchParams) ? (
-          <MoviesCatalog params={searchParams} />
-        ) : (
+        {searchParams.type && searchParams.type === "tvSeries" ? (
           <SeriesCatalog params={searchParams} />
+        ) : (
+          <MoviesCatalog queryParams={searchParams} />
         )}
       </Suspense>
     </>
@@ -50,27 +48,19 @@ const LoadingSkeleton: FC = () => {
   return <div>Loading...</div>;
 };
 
-const isMovieParams = (
-  browseSearchParams: BrowseSearchParams
-): browseSearchParams is MovieSearchParams => {
-  return (
-    browseSearchParams.type === "movie" || browseSearchParams.type === undefined
-  );
-};
-
 export type BrowseSearchParams = MovieSearchParams | TVSeriesSearchParams;
 
 export interface MovieSearchParams {
   type?: (typeof MediaTypeValuesObj)["movie"];
-  page?: number;
+  page?: string;
   genres?: string;
   sortBy?: SortByType;
   filterBy?: MovieFilterByType;
 }
 
 export interface TVSeriesSearchParams {
-  type?: (typeof MediaTypeValuesObj)["tvSeries"];
-  page?: number;
+  type: (typeof MediaTypeValuesObj)["tvSeries"];
+  page?: string;
   genres?: string;
   sortBy?: SortByType;
   filterBy?: TVSeriesFilterByType;
