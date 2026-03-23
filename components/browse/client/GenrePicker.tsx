@@ -2,7 +2,7 @@
 
 import { MediaType } from "@/types/shared/browse";
 import { getMovieGenres } from "@/lib/client/browse/get-movie-genres";
-import { getTvSeriesGenres } from "@/lib/client/browse/get-tvSeries-genres";
+import { getTvSeriesGenres } from "@/lib/client/browse/get-tvseries-genres";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC, useCallback, useState } from "react";
