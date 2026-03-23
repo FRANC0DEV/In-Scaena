@@ -1,5 +1,6 @@
-import { TVSeriesSearchParams } from "@/types/shared/browse";
 import "server-only";
+
+import { DiscoverQueryResult, DiscoverTVSerieObj, TVSeriesSearchParams } from "@/types/shared/browse";
 import { getUserRegionISO3166_1 } from "../get-user-region";
 import { getUserLanguageISO639_1 } from "../get-user-language";
 import { getUserTimezone } from "../get-user-timezone";
@@ -124,31 +125,7 @@ export const getTvSeries = async (
       },
     }
   );
-  const tvSeriesQueryResult = (await tvSeriesQuery.json()) as QueryResult;
+  const tvSeriesQueryResult = (await tvSeriesQuery.json()) as DiscoverQueryResult<DiscoverTVSerieObj>;
 
   return tvSeriesQueryResult;
 };
-
-export interface QueryResult {
-  page: number;
-  results: Result[];
-  total_pages: number;
-  total_results: number;
-}
-
-export interface Result {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: number[];
-  id: number;
-  origin_country: string[];
-  original_language: string;
-  original_name: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  first_air_date: string;
-  name: string;
-  vote_average: number;
-  vote_count: number;
-}

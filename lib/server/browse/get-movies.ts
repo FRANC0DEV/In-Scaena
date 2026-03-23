@@ -1,6 +1,6 @@
 import "server-only";
 
-import { MovieSearchParams } from "@/types/shared/browse";
+import { DiscoverMovieObj, DiscoverQueryResult, MovieSearchParams } from "@/types/shared/browse";
 import { getUserRegionISO3166_1 } from "../get-user-region";
 import { getUserLanguageISO639_1 } from "../get-user-language";
 
@@ -118,32 +118,7 @@ export const getMovies = async (movieSearchParams: MovieSearchParams) => {
       },
     }
   );
-  const moviesQueryResult = (await moviesQuery.json()) as DiscoverMovieQueryResult;
+  const moviesQueryResult = (await moviesQuery.json()) as DiscoverQueryResult<DiscoverMovieObj>;
 
   return moviesQueryResult;
 };
-
-
-export interface DiscoverMovieQueryResult {
-  page: number;
-  results: DiscoverMovieObj[];
-  total_pages: number;
-  total_results: number;
-}
-
-export interface DiscoverMovieObj {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: number[];
-  id: number;
-  original_language: string;
-  original_title: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  release_date: string;
-  title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
-}
