@@ -1,4 +1,6 @@
-type PaginationItem = number | "...";
+"use client";
+
+import { PaginationItem } from "@/types/client/pagination";
 
 export function getPagination(
   currentPage: number,

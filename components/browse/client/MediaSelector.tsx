@@ -1,8 +1,7 @@
 "use client";
 
-import { MediaType } from "@/app/browse/page";
 import { FC, useCallback, useState } from "react";
-import { MediaTypeValuesObj } from "@/app/browse/page";
+import { MediaTypeValuesObj, MediaType } from "@/types/shared/browse";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 export const MediaSelector: FC<{ initialValue: MediaType }> = ({
   initialValue,

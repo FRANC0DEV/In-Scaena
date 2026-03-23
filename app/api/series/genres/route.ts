@@ -1,8 +1,13 @@
+import { getUserLanguageISO639_1 } from "@/lib/server/get-user-language";
+import { getUserRegionISO3166_1 } from "@/lib/server/get-user-region";
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  const region = await getUserRegionISO3166_1();
+  const language = await getUserLanguageISO639_1();
+  const searchParams = new URLSearchParams({ region, language });
   const response = await fetch(
-    "https://api.themoviedb.org/3/genre/tv/list",
+    `https://api.themoviedb.org/3/genre/tv/list?${searchParams.toString()}`,
     {
       headers: {
         Authorization: `Bearer ${process.env.TMDB_BEARER_TOKEN}`,

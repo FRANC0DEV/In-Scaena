@@ -1,6 +1,9 @@
 "use client";
-import { MediaType } from "@/app/browse/page";
-import { getMovieGenres, getTvSeriesGenres } from "@/lib/requests/genres";
+import { MediaType } from "@/types/shared/browse";
+import {
+  getMovieGenres,
+  getTvSeriesGenres,
+} from "@/lib/client/requests/genres";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC, useCallback, useState } from "react";

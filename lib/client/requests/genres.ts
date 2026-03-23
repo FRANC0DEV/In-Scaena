@@ -1,4 +1,5 @@
 "use client"; /**La funcion getMovieGenres se ejecuta en cliente */
+
 export interface GenresQueryResult {
   genres: Genre[];
 }

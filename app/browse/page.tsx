@@ -4,6 +4,9 @@ import { FC, Suspense } from "react";
 import { ReactQueryProvider } from "@/components/client/ReactQueryProvider";
 import { MediaSelector } from "@/components/browse/client/MediaSelector";
 import { SeriesCatalog } from "@/components/browse/server/SeriesCatalog";
+import { MovieFilter } from "@/components/browse/client/MovieFilter";
+import { BrowseSearchParams } from "@/types/shared/browse";
+import { SeriesFilter } from "@/components/browse/client/SeriesFilter";
 
 export default async function BrowsePage(props: {
   searchParams: Promise<BrowseSearchParams>;
@@ -27,15 +30,13 @@ export default async function BrowsePage(props: {
         {/**Media Selector (movies or series)*/}
         <MediaSelector initialValue={mediaType} />
         {/**Genre Picker*/}
-        <GenrePicker
-          key={mediaType}
-          mediaType={mediaType}
-        />
+        <GenrePicker key={mediaType} mediaType={mediaType} />
         {/**Filter*/}
+        {mediaType === "movie" ? <MovieFilter /> : <SeriesFilter />}
       </ReactQueryProvider>
       <Suspense fallback={<LoadingSkeleton />}>
         {searchParams.type && searchParams.type === "tvSeries" ? (
-          <SeriesCatalog params={searchParams} />
+          <SeriesCatalog queryParams={searchParams} />
         ) : (
           <MoviesCatalog queryParams={searchParams} />
         )}
@@ -47,37 +48,3 @@ export default async function BrowsePage(props: {
 const LoadingSkeleton: FC = () => {
   return <div>Loading...</div>;
 };
-
-export type BrowseSearchParams = MovieSearchParams | TVSeriesSearchParams;
-
-export interface MovieSearchParams {
-  type?: (typeof MediaTypeValuesObj)["movie"];
-  page?: string;
-  genres?: string;
-  sortBy?: SortByType;
-  filterBy?: MovieFilterByType;
-}
-
-export interface TVSeriesSearchParams {
-  type: (typeof MediaTypeValuesObj)["tvSeries"];
-  page?: string;
-  genres?: string;
-  sortBy?: SortByType;
-  filterBy?: TVSeriesFilterByType;
-}
-
-type MovieFilterByType = "In Theatres" | "Coming Soon";
-type TVSeriesFilterByType = "Air Today" | "On the Air";
-
-type SortByType = {
-  by: "Popularity" | "Rating";
-  way: "ASC" | "DESC";
-};
-
-export const MediaTypeValuesObj = {
-  movie: "movie",
-  tvSeries: "tvSeries",
-} as const;
-
-export type MediaType =
-  (typeof MediaTypeValuesObj)[keyof typeof MediaTypeValuesObj];

@@ -1,11 +1,11 @@
 "use client";
-import { getPagination } from "@/lib/pagination/pagination";
+import { getPagination } from "@/lib/client/pagination/pagination";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { FC } from "react";
 export const CatalogNavigation: FC<{
   currentPage: number;
   totalPages: number;
-}> = ({ currentPage,totalPages }) => {
+}> = ({ currentPage, totalPages }) => {
   const pathname = usePathname();
   const readOnlySearchParams = useSearchParams();
   const { replace } = useRouter();
