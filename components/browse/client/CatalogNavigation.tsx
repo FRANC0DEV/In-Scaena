@@ -16,7 +16,7 @@ export const CatalogNavigation: FC<{
     replace(`${pathname}?${params.toString()}`);
   };
   return (
-    <div className="flex">
+    <div className="mx-auto">
       {pages.map((p, i) =>
         p === "..." ? (
           <span key={`${p}-${i}`}>...</span>

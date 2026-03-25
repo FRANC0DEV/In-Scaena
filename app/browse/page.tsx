@@ -7,6 +7,7 @@ import { SeriesCatalog } from "@/components/browse/server/SeriesCatalog";
 import { MovieFilter } from "@/components/browse/client/MovieFilter";
 import { BrowseSearchParams } from "@/types/shared/browse";
 import { SeriesFilter } from "@/components/browse/client/SeriesFilter";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function BrowsePage(props: {
   searchParams: Promise<BrowseSearchParams>;
@@ -29,22 +30,43 @@ export default async function BrowsePage(props: {
 
         {/**Media Selector (movies or series)*/}
         <MediaSelector initialValue={mediaType} />
-        {/**Genre Picker*/}
-        <GenrePicker key={mediaType} mediaType={mediaType} />
+
         {/**Filter*/}
         {mediaType === "movie" ? <MovieFilter /> : <SeriesFilter />}
       </ReactQueryProvider>
-      <Suspense fallback={<LoadingSkeleton />}>
-        {searchParams.type && searchParams.type === "tvSeries" ? (
-          <SeriesCatalog queryParams={searchParams} />
-        ) : (
-          <MoviesCatalog queryParams={searchParams} />
-        )}
-      </Suspense>
+      <div className="flex flex-row">
+        {/**Genre Picker*/}
+        <ReactQueryProvider>
+          <GenrePicker key={mediaType} mediaType={mediaType} />
+        </ReactQueryProvider>
+        <Suspense fallback={<LoadingSkeleton />}>
+          {searchParams.type && searchParams.type === "tvSeries" ? (
+            <SeriesCatalog queryParams={searchParams} />
+          ) : (
+            <MoviesCatalog queryParams={searchParams} />
+            // <LoadingSkeleton/>
+          )}
+        </Suspense>
+      </div>
     </>
   );
 }
 
-const LoadingSkeleton: FC = () => {
-  return <div>Loading...</div>;
+const LoadingSkeleton: FC =  () => {
+  return (
+    <ul className="grid grid-cols-5 gap-2 w-fit ml-auto">
+      {Array(20).fill(0).map((_,i) => (
+        <MovieCardSkeleton key={i} />
+      ))}
+    </ul>
+  );
 };
+
+const MovieCardSkeleton = () => {
+  return (
+    <div className="flex flex-col justify-between w-fit gap-2 ml-auto">
+      <Skeleton className="w-50 h-75 bg-gray-200 rounded-none"/>
+      <Skeleton className="w-45 h-5 bg-gray-200 mx-auto"/>
+    </div>
+  )
+}

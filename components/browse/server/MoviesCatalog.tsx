@@ -4,6 +4,7 @@ import { FC } from "react";
 import { CatalogNavigation } from "../client/CatalogNavigation";
 import { MovieSearchParams } from "@/types/shared/browse";
 import { getMovies } from "@/lib/server/browse/get-movies";
+import { MovieCard } from "../client/MovieCard";
 
 export const MoviesCatalog: FC<{ queryParams: MovieSearchParams }> = async ({
   queryParams,
@@ -14,16 +15,16 @@ export const MoviesCatalog: FC<{ queryParams: MovieSearchParams }> = async ({
     total_pages,
   } = await getMovies(queryParams);
   return (
-    <>
-      <ul>
+    <div className="flex flex-col ml-auto">
+      <ul className="grid grid-cols-5 gap-2 w-fit">
         {movies.map((r) => (
-          <li key={r.id}>{r.title}</li>
+          <MovieCard {...r} key={r.id} />
         ))}
       </ul>
       <CatalogNavigation
         currentPage={currentPage}
         totalPages={Math.min(total_pages, 500)}
       />
-    </>
+    </div>
   );
 };

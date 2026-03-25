@@ -61,7 +61,7 @@ export const GenrePicker: FC<{ mediaType: MediaType }> = ({ mediaType }) => {
   }
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-col">
       {data.genres.map((g) => (
         <label key={`${g.id}-${g.name}`}>
           <input
