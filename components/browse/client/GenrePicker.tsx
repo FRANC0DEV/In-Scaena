@@ -1,13 +1,12 @@
 "use client";
-
-import { MediaType } from "@/types/shared/browse";
-import { getMovieGenres } from "@/lib/client/browse/get-movie-genres";
-import { getTvSeriesGenres } from "@/lib/client/browse/get-tvseries-genres";
-import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FC, useCallback, useState } from "react";
+import { FC, use, useCallback, useState } from "react";
+import { GenresQueryResult } from "@/types/server/genres";
 
-export const GenrePicker: FC<{ mediaType: MediaType }> = ({ mediaType }) => {
+export const GenrePicker: FC<{
+  genresQueryPromise: Promise<GenresQueryResult>;
+}> = ({ genresQueryPromise }) => {
+  const genresQueryResult = use(genresQueryPromise);
   const pathname = usePathname();
   const readOnlySearchParams = useSearchParams();
   const router = useRouter();
@@ -47,22 +46,9 @@ export const GenrePicker: FC<{ mediaType: MediaType }> = ({ mediaType }) => {
     [selectedGenresIds, readOnlySearchParams, router, pathname]
   );
 
-  const { data, status, error } = useQuery({
-    queryKey: [mediaType, "genres"],
-    queryFn: mediaType === "movie" ? getMovieGenres : getTvSeriesGenres,
-  });
-
-  if (status === "pending") {
-    return <p>Loading...</p>;
-  }
-
-  if (status === "error") {
-    return <p className="text-destructive">error: {error.message}</p>;
-  }
-
   return (
     <div className="flex flex-col">
-      {data.genres.map((g) => (
+      {genresQueryResult.genres.map((g) => (
         <label key={`${g.id}-${g.name}`}>
           <input
             type="checkbox"

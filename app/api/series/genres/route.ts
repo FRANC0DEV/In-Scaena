@@ -1,30 +1,14 @@
-import { getUserLanguageISO639_1 } from "@/lib/server/get-user-language";
-import { getUserRegionISO3166_1 } from "@/lib/server/get-user-region";
+import { getTvSeriesGenres } from "@/lib/server/browse/get-tvseries-genres";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const region = await getUserRegionISO3166_1();
-  const language = await getUserLanguageISO639_1();
-  const searchParams = new URLSearchParams({ region, language });
-  const response = await fetch(
-    `https://api.themoviedb.org/3/genre/tv/list?${searchParams.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.TMDB_BEARER_TOKEN}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
+  try {
+    const data = await getTvSeriesGenres();
+    return NextResponse.json(data);
+  } catch {
     return NextResponse.json(
-      {
-        error: "Error fetching genres",
-      },
+      { error: "Error fetching genres" },
       { status: 500 }
     );
   }
-
-  const data = await response.json();
-
-  return NextResponse.json(data, { status: 200 });
 }
